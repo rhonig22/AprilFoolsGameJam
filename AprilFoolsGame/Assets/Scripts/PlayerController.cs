@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,24 +8,40 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D playerRB;
     private BoxCollider2D boxCollider;
-    [SerializeField] private int jumpForce = 5;
-    [SerializeField] private int speed = 8;
-    [SerializeField] private int teleport = 3;
+    private SpriteRenderer spriteRenderer;
+    private int jumpForce = 10;
+    private int speed = 8;
+    private float teleport = 3.5f;
     private int jumps = 1;
+    private bool facingRight = true;
+    [SerializeField] Sprite spriteRight;
+    [SerializeField] Sprite spriteLeft;
 
     // Start is called before the first frame update
     void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     void Update()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
+        if (horizontalInput > 0 )
+        {
+            facingRight= true;
+            spriteRenderer.sprite = spriteRight;
+        }
+        else if (horizontalInput < 0 )
+        {
+            facingRight= false;
+            spriteRenderer.sprite = spriteLeft;
+        }
+
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            transform.Translate(Vector3.right * horizontalInput * teleport);
+            transform.Translate(Vector3.right * (facingRight ? 1 : -1) * teleport);
         }
         else
         {
@@ -47,7 +64,16 @@ public class PlayerController : MonoBehaviour
 
             if (colliderDistance.isOverlapped)
             {
-                transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
+                Vector2 moveDistance = colliderDistance.pointA - colliderDistance.pointB;
+                if (moveDistance.y < .1)
+                {
+                    moveDistance.y = Mathf.Round(moveDistance.y);
+                }
+
+                if (moveDistance.magnitude < 0)
+                    continue;
+
+                transform.Translate(moveDistance);
             }
         }
     }
@@ -65,6 +91,12 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Spike"))
         {
             PlayerDeath();
+        }
+
+        if (collision.gameObject.CompareTag("Jump"))
+        {
+            Destroy(collision.gameObject);
+            jumps++;
         }
     }
 
