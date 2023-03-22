@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9d7a37bf951941041b5f892451f76905
+guid: 6be2783dc385c4f4c91c92b270babee4
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -153,11 +153,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Block
+      name: JumpArrow
       rect:
         serializedVersion: 2
         x: 2
-        y: 222
+        y: 2
         width: 32
         height: 32
       alignment: 0
@@ -167,18 +167,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b9009a017e7fca14da8b66e2def1fb53
-      internalID: -1849842660
+      spriteID: 55a7087fd6492b04cb546651b0c4a933
+      internalID: 963090299
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Bricks
+      name: DownArrow1
       rect:
         serializedVersion: 2
-        x: 38
-        y: 222
+        x: 37
+        y: 2
         width: 32
         height: 32
       alignment: 0
@@ -188,18 +188,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e4db204862d306748b240168f1feda10
-      internalID: -2035014377
+      spriteID: 6cf8b16d80f16834c838da2455e0ced1
+      internalID: -592122993
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spike
+      name: DownArrow2
       rect:
         serializedVersion: 2
-        x: 76
-        y: 222
+        x: 74
+        y: 2
         width: 32
         height: 32
       alignment: 0
@@ -209,29 +209,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 940b88c63525fab43a7d7b9911b2f573
-      internalID: -4849736
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player
-      rect:
-        serializedVersion: 2
-        x: 113
-        y: 222
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8aa27d33531c5c94684844c155cb054d
-      internalID: 746665670
+      spriteID: c7365fd3a204e334a8d552177f7a3ab4
+      internalID: -2082572893
       vertices: []
       indices: 
       edges: []
@@ -247,10 +226,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Spike: -4849736
-      Player: 746665670
-      Block: -1849842660
-      Bricks: -2035014377
+      JumpArrow: 963090299
+      DownArrow2: -2082572893
+      DownArrow1: -592122993
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
