@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private float teleport = 3.5f;
     private int jumps = 1;
     private bool facingRight = true;
+    private bool canTeleport = true;
     [SerializeField] Sprite spriteRight;
     [SerializeField] Sprite spriteLeft;
 
@@ -40,7 +42,7 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.sprite = spriteLeft;
         }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
+        if (Input.GetKeyDown(KeyCode.DownArrow) && canTeleport) {
             transform.Translate(Vector3.right * (facingRight ? 1 : -1) * teleport);
         }
         else
@@ -55,27 +57,29 @@ public class PlayerController : MonoBehaviour
         }
 
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
+        Vector2 maxMoveDistance = new Vector2(0, 0);
         foreach (Collider2D hit in hits)
         {
             if (hit == boxCollider)
                 continue;
 
             ColliderDistance2D colliderDistance = hit.Distance(boxCollider);
-
-            if (colliderDistance.isOverlapped)
+            if (colliderDistance.isOverlapped && !hit.gameObject.GetComponent<Rigidbody2D>().IsUnityNull())
             {
                 Vector2 moveDistance = colliderDistance.pointA - colliderDistance.pointB;
-                if (moveDistance.y < .1)
-                {
-                    moveDistance.y = Mathf.Round(moveDistance.y);
-                }
-
-                if (moveDistance.magnitude < 0)
+                if (moveDistance.magnitude == 0)
                     continue;
 
-                transform.Translate(moveDistance);
+                if (Mathf.Abs(moveDistance.x) > Mathf.Abs(maxMoveDistance.x))
+                    maxMoveDistance.x = moveDistance.x;
+
+                if (Mathf.Abs(moveDistance.y) > Mathf.Abs(maxMoveDistance.y))
+                    maxMoveDistance.y = moveDistance.y;
             }
         }
+
+        if (maxMoveDistance.magnitude != 0)
+            transform.Translate(maxMoveDistance);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -98,10 +102,21 @@ public class PlayerController : MonoBehaviour
             Destroy(collision.gameObject);
             jumps++;
         }
+
+        if (collision.gameObject.CompareTag("EndTrigger"))
+        {
+            EndLevelLogic();
+        }
     }
 
     public void PlayerDeath()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void EndLevelLogic()
+    {
+        GameObject.Find("EndLevelManager").GetComponent<EndLevel1Manager>().Activate();
+        canTeleport = false;
     }
 }

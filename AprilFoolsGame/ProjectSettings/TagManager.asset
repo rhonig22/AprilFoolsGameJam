@@ -7,6 +7,7 @@ TagManager:
   - Floor
   - Spike
   - Jump
+  - EndTrigger
   layers:
   - Default
   - TransparentFX
