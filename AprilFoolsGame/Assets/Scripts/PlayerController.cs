@@ -11,13 +11,20 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
     private int jumpForce = 10;
+    private int additionalJumpForce = 8;
     private int speed = 8;
-    private float teleport = 3.5f;
-    private int jumps = 1;
+    private int jumps = 0;
+    private float teleportDistance = 3.5f;
+    private float teleportTime = .2f;
+    private float maxVelocity = 12f;
     private bool facingRight = true;
     private bool canTeleport = true;
+    private bool grounded = false;
+    private bool isTeleporting = false;
     [SerializeField] Sprite spriteRight;
     [SerializeField] Sprite spriteLeft;
+    [SerializeField] Material normalMaterial;
+    [SerializeField] Material translucent;
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +37,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isTeleporting)
+        {
+            transform.Translate(Vector3.right * (facingRight ? 1 : -1) * teleportDistance * Time.deltaTime / teleportTime);
+            return;
+        }
+
         float horizontalInput = Input.GetAxis("Horizontal");
+        // Control the sprite for the character
         if (horizontalInput > 0 )
         {
             facingRight= true;
@@ -42,20 +56,41 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.sprite = spriteLeft;
         }
 
+        // Control movement and teleporting
         if (Input.GetKeyDown(KeyCode.DownArrow) && canTeleport) {
-            transform.Translate(Vector3.right * (facingRight ? 1 : -1) * teleport);
+            isTeleporting= true;
+            spriteRenderer.material= translucent;
+            StartCoroutine(EndTeleport());
         }
         else
         {
             transform.Translate(Vector3.right * horizontalInput * speed * Time.deltaTime);
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) && jumps > 0)
+        // Cap the player's max velocity
+        Vector2 currentVelocity = playerRB.velocity;
+        if (currentVelocity.y > maxVelocity)
         {
-            playerRB.AddForce(Vector3.up * jumpForce, ForceMode2D.Impulse);
-            jumps--;
+            currentVelocity.y = maxVelocity;
+            playerRB.velocity = currentVelocity;
+        }
+        else if (currentVelocity.y < -maxVelocity)
+        {
+            currentVelocity.y = -maxVelocity;
+            playerRB.velocity = currentVelocity;
         }
 
+        // Control jumping
+        if (Input.GetKeyDown(KeyCode.UpArrow) && jumps > 0)
+        {
+            currentVelocity.y = 0;
+            playerRB.velocity = currentVelocity;
+            playerRB.AddForce(Vector3.up * (grounded ? jumpForce : additionalJumpForce), ForceMode2D.Impulse);
+            jumps--;
+            grounded = false;
+        }
+
+        // Control surface collision and grounding logic
         Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, boxCollider.size, 0);
         Vector2 maxMoveDistance = new Vector2(0, 0);
         foreach (Collider2D hit in hits)
@@ -76,23 +111,28 @@ public class PlayerController : MonoBehaviour
                 if (Mathf.Abs(moveDistance.y) > Mathf.Abs(maxMoveDistance.y))
                     maxMoveDistance.y = moveDistance.y;
             }
+
+            if (Vector2.Angle(colliderDistance.normal, Vector2.up) < 90 && playerRB.velocity.y < 0)
+            {
+                grounded = true;
+                jumps = 1;
+            }
         }
 
         if (maxMoveDistance.magnitude != 0)
             transform.Translate(maxMoveDistance);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private IEnumerator EndTeleport()
     {
-        if (collision.gameObject.CompareTag("Floor"))
-        {
-            jumps = 1;
-        }
+        yield return new WaitForSeconds(teleportTime);
+        isTeleporting = false;
+        spriteRenderer.material = normalMaterial;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Spike"))
+        if (collision.gameObject.CompareTag("Spike") && !isTeleporting)
         {
             PlayerDeath();
         }
