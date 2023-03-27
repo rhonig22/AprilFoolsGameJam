@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8364509001476527245}
   - component: {fileID: 821803069879642648}
-  - component: {fileID: 7413356211199413471}
+  - component: {fileID: 4451022569588634601}
   - component: {fileID: 9198469751171707590}
   m_Layer: 0
   m_Name: Bricks
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 164639107, guid: 314b1cf08c5dae946b3ec3b3bcaf8e80, type: 3}
+  m_Sprite: {fileID: 1918309330, guid: 314b1cf08c5dae946b3ec3b3bcaf8e80, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -86,7 +86,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &7413356211199413471
+--- !u!61 &4451022569588634601
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

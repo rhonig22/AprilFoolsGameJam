@@ -148,3 +148,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRight: {fileID: -905887721, guid: 314b1cf08c5dae946b3ec3b3bcaf8e80, type: 3}
   spriteLeft: {fileID: -184146557, guid: 314b1cf08c5dae946b3ec3b3bcaf8e80, type: 3}
+  normalMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  translucent: {fileID: 2100000, guid: e374df8d3618a2d4c86682a2eec0ba74, type: 2}
