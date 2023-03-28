@@ -53,11 +53,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8923002096290858916, guid: 96e5ba6dbc5993f488c2f713f70554ac, type: 3}
       propertyPath: m_Name
-      value: Ceiling
+      value: Ceiling Variant
       objectReference: {fileID: 0}
     - target: {fileID: 8923002096290858916, guid: 96e5ba6dbc5993f488c2f713f70554ac, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Solid
       objectReference: {fileID: 0}
     - target: {fileID: 9182474685102902013, guid: 96e5ba6dbc5993f488c2f713f70554ac, type: 3}
       propertyPath: m_IsTrigger
