@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -10,14 +11,20 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Restart();
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            if (DataManager.finishedLevel2)
+                ResetPlayerLocation(0);
+        }
+        else
+            ResetPlayerLocation(DataManager.currentCheckPointIndex);
     }
 
-    public void Restart()
+    public void ResetPlayerLocation(int index)
     {
-        if (DataManager.currentCheckPointIndex < checkpoints.Length)
+        if (index < checkpoints.Length)
         {
-            Vector3 startPosition = checkpoints[DataManager.currentCheckPointIndex].transform.position;
+            Vector3 startPosition = checkpoints[index].transform.position;
             startPosition.z = player.transform.position.z;
             player.transform.position = startPosition;
         }
