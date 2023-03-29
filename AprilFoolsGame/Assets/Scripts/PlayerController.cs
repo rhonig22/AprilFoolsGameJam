@@ -11,10 +11,12 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRB;
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
+    private SpawnManager spawnManager;
     private int jumpForce = 10;
     private int additionalJumpForce = 8;
     private int speed = 8;
     private int jumps = 0;
+    private const int originalGravity = 2;
     private float teleportDistance = 3.5f;
     private float teleportTime = .2f;
     private float maxVelocity = 12f;
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour
         playerRB = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        spawnManager = GameObject.Find("SpawnManager")?.GetComponent<SpawnManager>();
     }
 
     // Update is called once per frame
@@ -51,6 +54,7 @@ public class PlayerController : MonoBehaviour
         }
 
         float horizontalInput = Input.GetAxis("Horizontal");
+        Vector2 currentVelocity = playerRB.velocity;
         // Control the sprite for the character
         if (horizontalInput > 0 )
         {
@@ -64,9 +68,13 @@ public class PlayerController : MonoBehaviour
         }
 
         // Control movement and teleporting
-        if (Input.GetKeyDown(KeyCode.DownArrow) && canTeleport) {
-            isTeleporting= true;
+        if (Input.GetKeyDown(KeyCode.DownArrow) && canTeleport)
+        {
+            currentVelocity.y = 0;
+            playerRB.velocity = currentVelocity;
+            isTeleporting = true;
             spriteRenderer.material= translucent;
+            playerRB.gravityScale = 0;
             StartCoroutine(EndTeleport());
         }
         else if (horizontalInput != 0)
@@ -95,7 +103,6 @@ public class PlayerController : MonoBehaviour
         }
 
         // Cap the player's max velocity
-        Vector2 currentVelocity = playerRB.velocity;
         if (currentVelocity.y > maxVelocity)
         {
             currentVelocity.y = maxVelocity;
@@ -148,6 +155,7 @@ public class PlayerController : MonoBehaviour
         isTeleporting = false;
         canTeleport = false;
         spriteRenderer.material = normalMaterial;
+        playerRB.gravityScale = originalGravity;
         StartCoroutine(RefreshTeleport());
     }
 
@@ -176,6 +184,11 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("EndTrigger"))
         {
             EndLevelLogic();
+        }
+
+        if (collision.gameObject.CompareTag("Checkpoint"))
+        {
+            spawnManager.SetCheckPoint(collision.gameObject);
         }
     }
 

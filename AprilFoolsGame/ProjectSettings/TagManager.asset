@@ -9,6 +9,7 @@ TagManager:
   - Jump
   - EndTrigger
   - Solid
+  - Checkpoint
   layers:
   - Default
   - TransparentFX
