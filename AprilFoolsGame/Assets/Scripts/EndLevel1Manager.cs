@@ -17,7 +17,7 @@ public class EndLevel1Manager : MonoBehaviour
     private GameObject player;
     private Vector3 playerPosition;
     private bool isActive = false;
-    private const float threshhold = 1.2f;
+    private const float threshhold = 1.1f;
 
     public void Activate()
     {

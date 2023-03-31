@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
     private SpriteRenderer spriteRenderer;
     private SpawnManager spawnManager;
+    private AudioSource audioSource;
     private int jumpForce = 10;
     private int additionalJumpForce = 8;
     private int speed = 8;
@@ -33,6 +34,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Sprite spriteLeft;
     [SerializeField] Material normalMaterial;
     [SerializeField] Material translucent;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip dashSound;
+    [SerializeField] private AudioClip deathSound;
     public bool isEndgame = false;
     public UnityEvent startEndCredits = new UnityEvent();
 
@@ -43,6 +47,7 @@ public class PlayerController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         spawnManager = GameObject.Find("SpawnManager")?.GetComponent<SpawnManager>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -79,6 +84,8 @@ public class PlayerController : MonoBehaviour
             isTeleporting = true;
             spriteRenderer.material= translucent;
             playerRB.gravityScale = 0;
+            audioSource.clip = dashSound;
+            audioSource.Play();
             StartCoroutine(EndTeleport());
         }
         else if (horizontalInput != 0)
@@ -121,6 +128,8 @@ public class PlayerController : MonoBehaviour
         // Control jumping
         if (Input.GetKeyDown(KeyCode.UpArrow) && (grounded || jumps > 0))
         {
+            audioSource.clip = jumpSound;
+            audioSource.Play();
             currentVelocity.y = 0;
             playerRB.velocity = currentVelocity;
             playerRB.AddForce(Vector3.up * (grounded ? jumpForce : additionalJumpForce), ForceMode2D.Impulse);
@@ -222,6 +231,8 @@ public class PlayerController : MonoBehaviour
         float xForce = UnityEngine.Random.Range(-2f, 2f);
         playerRB.AddForce(Vector3.up * jumpForce + Vector3.right * xForce, ForceMode2D.Impulse);
         spriteRenderer.flipY = true;
+        audioSource.clip = deathSound;
+        audioSource.Play();
         StartCoroutine(Restart());
     }
 
