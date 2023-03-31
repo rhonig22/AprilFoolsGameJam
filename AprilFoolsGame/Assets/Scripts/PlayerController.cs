@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float maxVelocity = 12f;
     private float deathWaitTime = 1f;
     private float teleportCooldownTime = 1f;
+    private float endGameWaitTime = 1.2f;
     private bool facingRight = true;
     private bool canTeleport = true;
     private bool grounded = false;
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Sprite spriteLeft;
     [SerializeField] Material normalMaterial;
     [SerializeField] Material translucent;
+    public bool isEndgame = false;
+    public UnityEvent startEndCredits = new UnityEvent();
 
     // Start is called before the first frame update
     void Start()
@@ -190,11 +194,28 @@ public class PlayerController : MonoBehaviour
         {
             spawnManager.SetCheckPoint(collision.gameObject);
         }
+
+        if (collision.gameObject.CompareTag("EndGame"))
+        {
+            EndGameLogic();
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (isDead)
+            return;
+
+        if (collision.gameObject.CompareTag("Spike") && !isTeleporting)
+        {
+            PlayerDeath();
+        }
     }
 
     public void PlayerDeath()
     {
         isDead= true;
+        DataManager.Instance.IncreaseDeath();
         Vector2 currentVelocity = playerRB.velocity;
         currentVelocity.y = 0;
         playerRB.velocity = currentVelocity;
@@ -223,5 +244,20 @@ public class PlayerController : MonoBehaviour
                 SceneManager.LoadScene(1);
                 break;
         }
+    }
+
+    public void EndGameLogic()
+    {
+        isDead = true;
+        isEndgame = true;
+        StartCoroutine(StartEyeAnimation());
+    }
+
+    private IEnumerator StartEyeAnimation()
+    {
+        yield return new WaitForSeconds(endGameWaitTime);
+        GameObject eyeBlock = GameObject.Find("EyeBlock");
+        eyeBlock.GetComponent<Animator>().SetTrigger("EndGame");
+        startEndCredits.Invoke();
     }
 }

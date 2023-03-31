@@ -10,6 +10,7 @@ TagManager:
   - EndTrigger
   - Solid
   - Checkpoint
+  - EndGame
   layers:
   - Default
   - TransparentFX
