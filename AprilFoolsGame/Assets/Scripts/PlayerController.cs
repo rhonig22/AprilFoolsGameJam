@@ -58,7 +58,8 @@ public class PlayerController : MonoBehaviour
 
         if (isTeleporting)
         {
-            transform.Translate(Vector3.right * (facingRight ? 1 : -1) * teleportDistance * Time.deltaTime / teleportTime);
+            float distance = GetRayCastDistance((facingRight ? 1 : -1) * teleportDistance * Time.deltaTime / teleportTime);
+            transform.Translate(Vector3.right * distance);
             return;
         }
 
@@ -90,27 +91,9 @@ public class PlayerController : MonoBehaviour
         }
         else if (horizontalInput != 0)
         {
-            Vector2 boxSize = boxCollider.size;
-            boxSize.y = 0;
-            Vector2 position = playerRB.position + (horizontalInput > 0 ? boxSize / 2 : -boxSize / 2);
-            RaycastHit2D[] hits = Physics2D.RaycastAll(position, Vector3.right * horizontalInput, speed * Time.deltaTime);
-            int index = 0;
-            bool found = false;
-            for (int i = 0; i < hits.Length; i++)
-            {
-                RaycastHit2D hit = hits[i];
-                if (hit.collider != boxCollider && hit.collider != null && hit.rigidbody != null)
-                {
-                    found = true;
-                    index = i;
-                    break;
-                }
-            }
-
-            if (found)
-                transform.Translate(Vector3.right * horizontalInput * hits[index].distance);
-            else
-                transform.Translate(Vector3.right * horizontalInput * speed * Time.deltaTime);
+            float distance = GetRayCastDistance(horizontalInput*speed*Time.deltaTime);
+            Debug.Log(distance);
+            transform.Translate(Vector3.right * distance);
         }
 
         // Cap the player's max velocity
@@ -136,6 +119,36 @@ public class PlayerController : MonoBehaviour
             if (!grounded)
                 jumps--;
             grounded = false;
+        }
+    }
+
+    private float GetRayCastDistance(float testDistance)
+    {
+        Vector2 boxSize = boxCollider.size;
+        boxSize.y = 0;
+        Vector2 position = playerRB.position + (testDistance > 0 ? boxSize / 2 : -boxSize / 2);
+        RaycastHit2D[] hits = Physics2D.RaycastAll(position, Vector3.right * Math.Abs(testDistance)/testDistance, testDistance);
+        int index = 0;
+        bool found = false;
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit2D hit = hits[i];
+            if (hit.collider != boxCollider && hit.collider != null && hit.rigidbody != null && !hit.collider.CompareTag("Spike"))
+            {
+                found = true;
+                index = i;
+                break;
+            }
+        }
+
+        if (found)
+        {
+            float dist = hits[index].distance;
+            return dist;
+        }
+        else
+        {
+            return testDistance;
         }
     }
 
