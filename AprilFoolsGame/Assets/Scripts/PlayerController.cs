@@ -14,9 +14,9 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private SpawnManager spawnManager;
     private AudioSource audioSource;
-    private int jumpForce = 10;
-    private int additionalJumpForce = 8;
-    private int speed = 8;
+    private int jumpForce = 20;
+    private int additionalJumpForce = 16;
+    private int speed = 12;
     private int jumps = 0;
     private const int originalGravity = 2;
     private float teleportDistance = 3.5f;
